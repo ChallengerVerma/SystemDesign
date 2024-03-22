@@ -1,0 +1,29 @@
+Problem Statement:
+
+In our system, we have a method called performTask() which executes CPU-intensive calculations. Currently, the system allows for the parallel execution of up to 1000 threads. However, when these threads execute simultaneously, the server resources become exhausted, resulting in a 504 Gateway Timeout error. This is primarily due to the excessive utilization of CPU resources, leading to system instability and degradation in performance.
+
+Solution Description:
+
+To address the issue of CPU resource exhaustion and mitigate the occurrence of 504 Gateway Timeout errors, we implement a solution that controls the concurrent access to the CPU-intensive performTask() method. The solution utilizes a Semaphore-based approach coupled with a request queue, which ensures that only a limited number of threads can execute the CPU-intensive calculation method simultaneously.
+
+Additionally, we implement auto-scaling functionality to dynamically spin up new ECS nodes when the number of requests piles up on any existing node. These new nodes are pre-populated with cached data to handle incoming requests effectively.
+
+Illustration:
+
+Without the Semaphore-based solution:
+
+Scenario 1: With 1000 threads concurrently accessing performTask(), the CPU utilization reaches 95%.
+Outcome: The server becomes overwhelmed, leading to system instability and ultimately resulting in a 504 Gateway Timeout error.
+With the Semaphore-based solution and auto-scaling:
+
+Scenario 2: We implement a Semaphore-based control mechanism that limits the maximum number of threads accessing performTask() to 50 at any given time.
+Outcome:
+Initially, the system receives multiple requests for performTask() execution.
+The Semaphore allows only 50 threads to acquire permits and access the CPU-intensive method concurrently.
+As each thread completes its task, it releases its permit, allowing another thread from the request queue to acquire it and execute the method.
+This ensures that CPU resources are effectively managed, preventing resource exhaustion and system instability.
+Despite the high volume of requests, the system maintains stability, and the occurrence of 504 Gateway Timeout errors is significantly reduced.
+Auto-Scaling:
+When the number of requests piles up on any existing ECS node, the auto-scaling mechanism detects the increased load and dynamically spins up new ECS nodes.
+These new nodes come pre-populated with cached data, ensuring that they are ready to handle incoming requests without causing delays.
+This dynamic scaling capability ensures that the system can handle fluctuations in demand effectively, maintaining responsiveness and preventing request failures.
